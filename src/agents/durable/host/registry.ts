@@ -518,13 +518,20 @@ export function installHooks(
     target.followed.get(String(id)) ??
     (await target.harness!.conversation(id, context)) ??
     target.conversation!;
+  const hooks = rt.createHooks(
+    host.deps.piAgentDir,
+    (id) => owner(target, id),
+    scope,
+    (event, fields) => host.deps.log(event, { cid, ...fields }, WARNING),
+  );
   registry.install(rt.refusalsExtension(byId));
   for (const extra of [
     tools.search,
     { extensions: [review] },
+    { extensions: [hooks.tool] },
     codemode,
     rt.createRtk({ scope, buildDir: BUILD_DIR }),
-    { extensions: [prompt] },
+    { extensions: [prompt, hooks.prompt] },
     transforms,
   ])
     for (const extension of extra.extensions) registry.install(extension);

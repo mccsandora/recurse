@@ -240,6 +240,30 @@ root, or the filesystem root outside a repository. Pi's own agent-directory
 settings skill. Changes appear on the next model request without a restart.
 Only names, descriptions and paths enter the initial prompt, not skill bodies.
 
+### Hooks
+
+Hooks run your own commands at two points, in the format Claude Code and Codex
+use, so hooks written for them work here. Put them in `hooks.json` in Pi's agent
+directory (`~/.config/recurse/pi-agent/`):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{ "matcher": "Bash", "hooks": [{ "type": "command", "command": "~/bin/check.sh" }] }],
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "cat ~/notes/context.md" }] }]
+  }
+}
+```
+
+A `PreToolUse` hook runs before each bash command, with the call as JSON on
+stdin (`tool_name` is `Bash`, the command is `tool_input.command`). It blocks
+the command by exiting 2 with a reason on stderr, or by printing
+`permissionDecision: "deny"` under `hookSpecificOutput`; the agent reads the
+reason. A `SessionStart` hook runs once when a conversation starts, and what it
+prints, or its `additionalContext`, joins that conversation's prompt. A hook
+that fails or times out (60 seconds, or its `timeout`) is skipped. Edits to
+`hooks.json` apply to the next command or conversation.
+
 ### Environment
 
 An agent can set environment variables for its own commands: an API key a

@@ -63,6 +63,7 @@ export {
 } from "../../../extensions/extra/codex/compaction.ts";
 export { observeUsageLimits } from "../../../extensions/extra/usage-limits/usage-limits.ts";
 export { createRtk } from "../../../extensions/extra/rtk/rtk.ts";
+export { createHooks } from "../../../extensions/extra/hooks/index.ts";
 export { McpServers } from "../../../extensions/extra/mcp/mcp.ts";
 export {
   createCodemodeExtension,
